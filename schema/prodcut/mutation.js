@@ -1,10 +1,13 @@
 // product/mutation.js
+
+const { ProductModel } = require("./db");
+
 const ProductMutation = {
-  productCreate: (parent, args) => {
+  productCreate: async (parent, args) => {
     // whatever
-  },
-  productUpdate: (parent, args) => {
-    // whatever
+    const product = new ProductModel({ ...args.product });
+    await product.save();
+    return product;
   },
 };
 module.exports = { ProductMutation };

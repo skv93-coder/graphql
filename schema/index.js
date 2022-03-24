@@ -7,6 +7,7 @@ const {
 } = require("./prodcut");
 
 const typeDefs = gql`
+  type Product
   type Query
   type Mutation
   ${ProductTypes}
@@ -15,7 +16,7 @@ const typeDefs = gql`
 const resolvers = {
   Query: { ...ProductQuery },
   Mutation: { ...ProductMutation },
-  Product: ProductResolvers,
+  // Product: ProductResolvers,
 };
 
 module.exports = { resolvers, typeDefs };

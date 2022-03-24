@@ -4,23 +4,20 @@ const ProductTypes = `
 type Product {
   id: ID
   name: String
+  description: String
 }
 extend type Query {
   product: Product
   products: [Product]
 }
-input ProductCreateDataInput {
-   
-}
-input ProductUpdateDataInput {
-   
-}
-input ProductUpdateWhereInput {
-   
+input inputProduct {
+  name: String
+  description: String
+
 }
 extend type Mutation {
-  productCreate(data: ProductCreateDataInput!): Product
-  productUpdate(data: ProductUpdateDataInput!, where: ProductUpdateWhereInput!): Product 
+
+  productCreate(product:inputProduct):Product
 }
 `;
 module.exports = {
