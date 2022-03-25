@@ -1,7 +1,15 @@
-const { typeDefs, resolvers } = require("./schema");
+const mongoose = require("mongoose");
 // The ApolloServer constructor requires two parameters: your schema
 
 const { ApolloServer } = require("apollo-server");
+
+const { typeDefs, resolvers } = require("./schema");
+
+mongoose.connect(
+  "mongodb://localhost:27017",
+  { useNewUrlParser: true, useUnifiedTopology: true },
+  (err) => (err ? console.log(err) : console.log("Connected to database"))
+);
 
 // definition and your set of resolvers.
 const server = new ApolloServer({ typeDefs, resolvers });

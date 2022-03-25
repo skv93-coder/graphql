@@ -5,6 +5,8 @@ type Product {
   id: ID
   name: String
   description: String
+  category:[String]
+    price: Int
 }
 extend type Query {
   product: Product
@@ -13,7 +15,8 @@ extend type Query {
 input inputProduct {
   name: String
   description: String
-
+  category:[String]
+  price: Int
 }
 extend type Mutation {
 
