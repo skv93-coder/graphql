@@ -5,6 +5,7 @@ const { ApolloServer } = require("apollo-server");
 
 const { typeDefs, resolvers } = require("./schema");
 const cokieparsers = require("./service/parseCokie");
+const { UserModel } = require("./schema/user/db");
 const jsonwebtoken = require("jsonwebtoken");
 
 mongoose.connect(
@@ -18,7 +19,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   cors: { credentials: true, origin: "https://studio.apollographql.com" },
-  context: ({ req, res }) => {
+  context: async ({ req, res }) => {
     console.log("200", 200);
     const token = req.headers["authorization"];
     res["Access-Control-Allow-Origin"] = "https://studio.apollographql.com";
@@ -30,8 +31,12 @@ const server = new ApolloServer({
           token,
           "d6gv3476d7wg7gd87278g378d3g238gs7283d73g"
         );
-        console.log("decoded", decoded);
+
         if (decoded) {
+          const user = await UserModel.findOne({
+            _id: refreshTokenPayload.id,
+          });
+          req.user = user;
           let refreshToken = req.headers.cookie.split("=");
           if (refreshToken.length === 2) {
             refreshToken = refreshToken[1];
@@ -39,8 +44,19 @@ const server = new ApolloServer({
               refreshToken,
               "d6gv3476d7wg7gd87278g378d3g238gs7283d73g"
             );
+
+            const legRoom = new Date().setDate(new Date().getDate() + 3);
+            if (legRoom > new Date(refreshTokenPayload.exp * 1000)) {
+              const newRefreshToken = jsonwebtoken.sign(
+                { id: user.id },
+                "d6gv3476d7wg7gd87278g378d3g238gs7283d73g",
+                { expiresIn: "1y" }
+              );
+              res.setHeader("Set-Cookie", [
+                `refreshToken=${newRefreshToken}; HttpOnly;SameSite=None; Secure`,
+              ]);
+            }
           }
-          console.log("refreshToken", refreshToken);
         }
       } catch (error) {}
     }

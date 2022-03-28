@@ -7,25 +7,40 @@ type User {
     password: String
 }
 
-input userInput {
+input signupDetails {
     name: String
     email: String
     password: String
     phone:Int
 }
+type MeResponse {
+name:String
+email:String
+mobile:String
+address:String
+
+}
 
 extend type Query {
-    me:User
+    me:MeResponse
+    token:String
 }
-type signupUserRes {
+type authUserRes {
     token:String
     name: String
     email: String
     mobile:Int
     address: String
 }
+input loginDetails {
+    email:String
+    password:String
+}
  extend type Mutation {
-     userCreate (user:userInput):signupUserRes
+     userCreate (user:signupDetails):authUserRes
+     login(user:loginDetails):authUserRes
  } 
 `;
-module.exports = { UserTypes };
+module.exports = {
+  UserTypes,
+};
