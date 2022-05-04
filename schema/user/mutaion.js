@@ -3,6 +3,28 @@ const bcrypt = require("bcryptjs");
 const jsonwebtoken = require("jsonwebtoken");
 
 const { UserModel } = require("./db");
+const tokenCreator = (user, res) => {
+  console.log(
+    " Token is created:>> ",
+    "Token is created"
+    // JSON.(user)
+    // res
+  );
+  const token = jsonwebtoken.sign(
+    { id: user.id },
+    "d6gv3476d7wg7gd87278g378d3g238gs7283d73g",
+    { expiresIn: "180d" }
+  );
+  const refreshToken = jsonwebtoken.sign(
+    { id: user.id },
+    "d6gv3476d7wg7gd87278g378d3g238gs7283d73g",
+    { expiresIn: "1y" }
+  );
+  res.cookie("refreshToken", refreshToken, [
+    { HttpOnly: "SameSite=None; Secure" },
+  ]);
+  return token;
+};
 
 const UserMutation = {
   userCreate: async (parent, args, { res }) => {
@@ -11,21 +33,7 @@ const UserMutation = {
     args.user.password = hashPassword;
     const user = await UserModel.create(args.user);
 
-    const token = jsonwebtoken.sign(
-      { id: user.id },
-      "d6gv3476d7wg7gd87278g378d3g238gs7283d73g",
-      { expiresIn: "180d" }
-    );
-    const refreshToken = jsonwebtoken.sign(
-      { id: user.id },
-      "d6gv3476d7wg7gd87278g378d3g238gs7283d73g",
-      { expiresIn: "1y" }
-    );
-    res.setHeader("Set-Cookie", [
-      `refreshToken=${refreshToken}; HttpOnly;SameSite=None; Secure`,
-    ]);
-
-    return { ...args.user, token };
+    return { ...args.user, token: () => tokenCreator(user, res) };
   },
   login: async (parent, args, { res }) => {
     const {

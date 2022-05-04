@@ -9,7 +9,7 @@ const { UserModel } = require("./schema/user/db");
 const jsonwebtoken = require("jsonwebtoken");
 
 mongoose.connect(
-  "mongodb://localhost:27017",
+  "mongodb://localhost:27017/myFirstDataBase",
   { useNewUrlParser: true, useUnifiedTopology: true },
   (err) => (err ? console.log(err) : console.log("Connected to database"))
 );
@@ -20,7 +20,7 @@ const server = new ApolloServer({
   resolvers,
   cors: { credentials: true, origin: "https://studio.apollographql.com" },
   context: async ({ req, res }) => {
-    console.log("200", 200);
+    console.log("200", 200, req.body);
     const token = req.headers["authorization"];
     res["Access-Control-Allow-Origin"] = "https://studio.apollographql.com";
     res["Access-Control-Allow-Credentials"] = true;
@@ -33,10 +33,6 @@ const server = new ApolloServer({
         );
 
         if (decoded) {
-          const user = await UserModel.findOne({
-            _id: refreshTokenPayload.id,
-          });
-          req.user = user;
           let refreshToken = req.headers.cookie.split("=");
           if (refreshToken.length === 2) {
             refreshToken = refreshToken[1];
@@ -44,7 +40,10 @@ const server = new ApolloServer({
               refreshToken,
               "d6gv3476d7wg7gd87278g378d3g238gs7283d73g"
             );
-
+            const user = await UserModel.findOne({
+              _id: refreshTokenPayload.id,
+            });
+            req.user = user;
             const legRoom = new Date().setDate(new Date().getDate() + 3);
             if (legRoom > new Date(refreshTokenPayload.exp * 1000)) {
               const newRefreshToken = jsonwebtoken.sign(
@@ -58,7 +57,9 @@ const server = new ApolloServer({
             }
           }
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log("error", error);
+      }
     }
     return { req, res };
   },
