@@ -27,10 +27,7 @@ extend type Query {
 }
 type authUserRes {
     token:String
-    name: String
-    email: String
-    mobile:Int
-    address: String
+    user:User
 }
 input loginDetails {
     email:String

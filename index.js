@@ -21,6 +21,7 @@ const server = new ApolloServer({
   cors: { credentials: true, origin: "https://studio.apollographql.com" },
   context: async ({ req, res }) => {
     console.log("200", 200, req.body);
+    let user;
     const token = req.headers["authorization"];
     res["Access-Control-Allow-Origin"] = "https://studio.apollographql.com";
     res["Access-Control-Allow-Credentials"] = true;
@@ -40,7 +41,7 @@ const server = new ApolloServer({
               refreshToken,
               "d6gv3476d7wg7gd87278g378d3g238gs7283d73g"
             );
-            const user = await UserModel.findOne({
+            user = await UserModel.findOne({
               _id: refreshTokenPayload.id,
             });
             req.user = user;
@@ -61,7 +62,7 @@ const server = new ApolloServer({
         console.log("error", error);
       }
     }
-    return { req, res };
+    return { req, res, user };
   },
 });
 

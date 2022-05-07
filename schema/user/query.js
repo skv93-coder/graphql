@@ -6,6 +6,8 @@ const { UserModel } = require("./db");
 
 const UserQuery = {
   me: async (_, __, context) => {
+    if (!context.user)
+      throw new AuthenticationError("Please login to proceed.");
     return context.user;
   },
   token: async (_, __, { req, res }) => {
