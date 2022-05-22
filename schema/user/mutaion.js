@@ -42,7 +42,7 @@ const UserMutation = {
       `refreshToken=${refreshToken}; HttpOnly;SameSite=None; Secure`,
     ]);
 
-    return { ...args.user, token };
+    return { user: args.user, token };
   },
 };
 module.exports = { UserMutation };
