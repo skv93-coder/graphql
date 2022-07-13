@@ -20,12 +20,12 @@ const server = new ApolloServer({
   resolvers,
   cors: { credentials: true, origin: "https://studio.apollographql.com" },
   context: async ({ req, res }) => {
-    console.log("200", 200, req.body);
+    console.log("2001111", 200, req.body);
     let user;
     const token = req.headers["authorization"];
     res["Access-Control-Allow-Origin"] = "https://studio.apollographql.com";
     res["Access-Control-Allow-Credentials"] = true;
-
+    console.log("token :>> ", token);
     if (token) {
       try {
         const decoded = jsonwebtoken.verify(

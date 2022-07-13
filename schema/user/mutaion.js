@@ -9,6 +9,7 @@ const { tokenCreator, createUserAndPassword } = require("./resolvers");
 
 const UserMutation = {
   userCreate: async (parent, args, { res }) => {
+    console.log("args", args);
     const _id = randomUUID();
     return {
       user: () => createUserAndPassword(args.user),
